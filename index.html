@@ -1,57 +1,366 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lunatic Fashion Store</title>
+<title>Lunatic Fashion Store - Ramadhan Luxury</title>
+
 <style>
-body{font-family:Arial;background:#f6f1e8;margin:0}
-header{background:#0f2f25;color:white;padding:15px;display:flex;justify-content:space-between}
-.cart{background:#d4af37;color:black;padding:5px 10px;border-radius:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px;padding:20px}
-.card{background:white;border-radius:10px;overflow:hidden}
-.card img{width:100%;height:200px;object-fit:cover}
-.card-body{padding:10px}
-button{background:#0f2f25;color:white;border:none;padding:8px;width:100%;cursor:pointer}
+:root{
+--green:#0f2f25;
+--cream:#f6f1e8;
+--gold:#d4af37;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family: 'Segoe UI', sans-serif}
+
+body{background:var(--cream);color:#333}
+
+/* HEADER */
+header{
+background:var(--green);
+color:white;
+padding:15px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:999;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:var(--gold);
+}
+
+.cart{
+background:var(--gold);
+color:black;
+padding:8px 15px;
+border-radius:20px;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* HERO */
+.hero{
+background:linear-gradient(rgba(15,47,37,0.8),rgba(15,47,37,0.8)),
+url('images/hero.jpg');
+background-size:cover;
+background-position:center;
+color:white;
+text-align:center;
+padding:120px 20px;
+position:relative;
+overflow:hidden;
+}
+
+.hero h1{
+font-size:38px;
+color:var(--gold);
+}
+
+/* GOLD SHIMMER */
+.shimmer::before{
+content:"";
+position:absolute;
+top:0;
+left:-75%;
+width:50%;
+height:100%;
+background:linear-gradient(120deg,transparent,rgba(255,215,0,0.6),transparent);
+animation:shine 3s infinite;
+}
+
+@keyframes shine{
+100%{left:125%}
+}
+
+/* SECTION */
+.section{padding:50px 20px}
+.section h2{
+text-align:center;
+margin-bottom:30px;
+color:var(--green);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+transition:0.3s;
+position:relative;
+}
+
+.card:hover{transform:translateY(-5px)}
+
+.card img{
+width:100%;
+height:260px;
+object-fit:cover;
+cursor:pointer;
+}
+
+.card-body{padding:15px}
+
+.card-body h3{
+font-size:16px;
+margin-bottom:5px;
+}
+
+.price{
+color:var(--green);
+font-weight:bold;
+margin-bottom:8px;
+}
+
+button{
+background:var(--green);
+color:white;
+border:none;
+padding:10px;
+width:100%;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:var(--gold);
+color:black;
+}
+
+/* SALE */
+.sale{
+background:var(--green);
+color:white;
+padding:40px 20px;
+text-align:center;
+}
+
+.sale h2{color:var(--gold);margin-bottom:10px}
+
+/* FOOTER */
+footer{
+background:var(--green);
+color:white;
+text-align:center;
+padding:20px;
+}
+
+/* POPUP */
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.8);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.popup-content{
+background:white;
+padding:20px;
+border-radius:15px;
+max-width:500px;
+width:90%;
+text-align:center;
+position:relative;
+}
+
+.popup-content img{
+width:100%;
+max-height:400px;
+object-fit:cover;
+margin-bottom:15px;
+}
+
+.close{
+position:absolute;
+top:10px;
+right:15px;
+font-size:22px;
+cursor:pointer;
+}
+
+/* EDIT BUTTON */
+.edit-btn{
+position:absolute;
+top:10px;
+left:10px;
+background:var(--gold);
+color:black;
+padding:5px 8px;
+font-size:12px;
+border-radius:6px;
+cursor:pointer;
+display:none;
+}
+
+.admin-mode .edit-btn{display:block}
+
+iframe{
+width:100%;
+height:300px;
+border:none;
+margin-top:20px;
+}
 </style>
 </head>
 <body>
 
 <header>
-<h2>Lunatic Fashion Store</h2>
-<div class="cart">Keranjang (<span id="cartCount">0</span>)</div>
+<div class="logo">Lunatic Fashion Store</div>
+<div>
+<span class="cart" onclick="openCart()">Keranjang (<span id="cartCount">0</span>)</span>
+<span class="cart" onclick="toggleAdmin()">Admin</span>
+</div>
 </header>
 
-<div class="grid" id="productContainer"></div>
+<section class="hero shimmer">
+<h1>Ramadhan Sale 2026</h1>
+<p>Elegan • Luxury • Berkelas</p>
+</section>
+
+<!-- BEST SELLER -->
+<section class="section">
+<h2>Best Seller & Unggulan</h2>
+<div class="grid" id="bestSeller"></div>
+</section>
+
+<!-- GAMIS -->
+<section class="section">
+<h2>Gamis Collection</h2>
+<div class="grid" id="gamis"></div>
+</section>
+
+<!-- CELANA ANAK -->
+<section class="section">
+<h2>Koleksi Celana Anak (8-12 Tahun)</h2>
+<div class="grid" id="anak"></div>
+</section>
+
+<!-- SALE -->
+<section class="sale">
+<h2>RAMADHAN SALE</h2>
+<p>Diskon hingga 30% • Free Gift • Free Ongkir</p>
+<p>Katalog: Anak • Dewasa • Couple</p>
+<p>Follow kami: FB | IG | TikTok | WA</p>
+<p>Alamat: Jl. Fashion Raya No.21, Jakarta</p>
+</section>
+
+<section class="section">
+<h2>Lokasi Toko</h2>
+<iframe src="https://www.google.com/maps?q=jakarta&output=embed"></iframe>
+</section>
+
+<footer>
+© 2026 Lunatic Fashion Store
+</footer>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+<div class="popup-content" id="popupContent">
+<span class="close" onclick="closePopup()">×</span>
+</div>
+</div>
 
 <script>
-let products=JSON.parse(localStorage.getItem("products"))||[];
 let cart=0;
-let container=document.getElementById("productContainer");
+let admin=false;
+
+let products={
+best:[
+{name:"Gamis Royal Emerald",price:"Rp 399.000",desc:"Premium elegant Ramadhan edition",img:"images/best1.jpg"},
+{name:"Couple Gold Edition",price:"Rp 599.000",desc:"Luxury couple set",img:"images/best2.jpg"}
+],
+gamis:[
+{name:"Gamis Olive Luxe",price:"Rp 349.000",desc:"Elegant modern gamis",img:"images/gamis1.jpg"},
+{name:"Gamis Cream Shimmer",price:"Rp 359.000",desc:"Soft cream luxury",img:"images/gamis2.jpg"},
+{name:"Gamis Emerald Silk",price:"Rp 379.000",desc:"Silk premium edition",img:"images/gamis3.jpg"},
+{name:"Gamis Moonlight Gold",price:"Rp 389.000",desc:"Gold accent edition",img:"images/gamis4.jpg"}
+],
+anak:[
+{name:"Celana Kids Olive",price:"Rp 179.000",desc:"Comfort fit",img:"images/anak1.jpg"},
+{name:"Celana Kids Cream",price:"Rp 169.000",desc:"Soft cotton",img:"images/anak2.jpg"},
+{name:"Celana Kids Casual",price:"Rp 159.000",desc:"Daily wear",img:"images/anak3.jpg"},
+{name:"Celana Kids Elegant",price:"Rp 189.000",desc:"Premium kids edition",img:"images/anak4.jpg"}
+]
+};
 
 function render(){
+renderSection("bestSeller",products.best);
+renderSection("gamis",products.gamis);
+renderSection("anak",products.anak);
+}
+
+function renderSection(id,data){
+let container=document.getElementById(id);
 container.innerHTML="";
-products.forEach((p,i)=>{
+data.forEach((p,i)=>{
 container.innerHTML+=`
 <div class="card">
-<img src="${p.image}">
+<div class="edit-btn" onclick="editProduct('${id}',${i})">Edit</div>
+<img src="${p.img}" onclick="openPopup('${p.img}','${p.name}','${p.desc}','${p.price}')">
 <div class="card-body">
 <h3>${p.name}</h3>
-<p>${p.price}</p>
-<p>Stok: ${p.stock}</p>
-<button onclick="addToCart(${i})" ${p.stock<=0?'disabled':''}>
-${p.stock<=0?'Stok Habis':'Tambah ke Keranjang'}
-</button>
+<div class="price">${p.price}</div>
+<button onclick="addToCart()">Tambah ke Keranjang</button>
 </div>
 </div>`;
 });
 }
 
-function addToCart(i){
-if(products[i].stock>0){
-products[i].stock--;
+function openPopup(img,name,desc,price){
+document.getElementById("popup").style.display="flex";
+document.getElementById("popupContent").innerHTML=`
+<span class="close" onclick="closePopup()">×</span>
+<img src="${img}">
+<h2>${name}</h2>
+<p>${desc}</p>
+<h3>${price}</h3>
+<button onclick="addToCart()">Tambah ke Keranjang</button>
+`;
+}
+
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
+
+function addToCart(){
 cart++;
 document.getElementById("cartCount").innerText=cart;
-localStorage.setItem("products",JSON.stringify(products));
+alert("Produk ditambahkan!");
+}
+
+function openCart(){
+alert("Total produk: "+cart);
+}
+
+function toggleAdmin(){
+let pass=prompt("Masukkan Password Admin:");
+if(pass==="lunatic2026"){
+admin=!admin;
+document.body.classList.toggle("admin-mode");
+}
+}
+
+function editProduct(section,index){
+let newImg=prompt("Masukkan path foto baru (contoh: images/baru.jpg)");
+if(newImg){
+products[section][index].img=newImg;
 render();
 }
 }
@@ -61,3 +370,4 @@ render();
 
 </body>
 </html>
+
