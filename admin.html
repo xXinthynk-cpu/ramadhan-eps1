@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Lunatic Fashion Store</title>
+<style>
+body{font-family:Arial;background:#f6f1e8;padding:20px}
+.login-box, .admin-box{max-width:400px;margin:auto}
+input,textarea{width:100%;padding:8px;margin:5px 0}
+button{background:#0f2f25;color:white;padding:10px;border:none;width:100%;cursor:pointer}
+.product{background:white;padding:10px;margin-top:10px;border-radius:8px}
+img{width:80px}
+h1{color:#0f2f25;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="login-box" id="loginBox">
+<h1>Login Admin</h1>
+<input type="password" id="password" placeholder="Masukkan Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div class="admin-box" id="adminBox" style="display:none;">
+<h1>Dashboard Admin</h1>
+
+<input type="text" id="name" placeholder="Nama Produk">
+<input type="text" id="price" placeholder="Harga">
+<input type="number" id="stock" placeholder="Stok">
+<textarea id="desc" placeholder="Deskripsi"></textarea>
+<input type="file" id="image">
+<button onclick="addProduct()">Tambah Produk</button>
+
+<h2>Daftar Produk</h2>
+<div id="productList"></div>
+</div>
+
+<script>
+let adminPassword="lunatic2026";
+let products=JSON.parse(localStorage.getItem("products"))||[];
+
+function login(){
+if(document.getElementById("password").value===adminPassword){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("adminBox").style.display="block";
+display();
+}else{
+alert("Password salah!");
+}
+}
+
+function save(){
+localStorage.setItem("products",JSON.stringify(products));
+display();
+}
+
+function addProduct(){
+let file=document.getElementById("image").files[0];
+let reader=new FileReader();
+reader.onload=function(){
+products.push({
+name:document.getElementById("name").value,
+price:document.getElementById("price").value,
+stock:document.getElementById("stock").value,
+desc:document.getElementById("desc").value,
+image:reader.result
+});
+save();
+}
+reader.readAsDataURL(file);
+}
+
+function deleteProduct(i){
+products.splice(i,1);
+save();
+}
+
+function display(){
+let html="";
+products.forEach((p,i)=>{
+html+=`
+<div class="product">
+<img src="${p.image}">
+<h3>${p.name}</h3>
+<p>${p.price}</p>
+<p>Stok: ${p.stock}</p>
+<button onclick="deleteProduct(${i})">Hapus</button>
+</div>`;
+});
+document.getElementById("productList").innerHTML=html;
+}
+</script>
+
+</body>
+</html>
+
